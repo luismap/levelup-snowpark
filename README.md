@@ -13,3 +13,14 @@
 * vectorize udfs [link](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udfs#using-vectorized-udfs)
 * reading files with udf [link](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udfs#reading-files-with-a-udf)
 * dependency management [link](https://docs.snowflake.com/en/developer-guide/python-connector/python-connector-dependencies)
+
+
+
+## Native app development
+
+* manifest file ![alt text](images/manifest_f.png)
+* setup script ![alt text](images/setup_script.png)
+* udf.py script ![alt text](images/udfpy.png)
+* core functional files for native app ![alt text](images/core_ff.png)
+* core functional components ![alt text](images/func_comp.png)
+* overview of setup script ![alt text](images/osetup.png)
