@@ -1,0 +1,61 @@
+
+-- Set the context for this session
+USE ROLE ACCOUNTADMIN;
+CREATE OR REPLACE DATABASE NATIVE_APP_DB;
+USE DATABASE NATIVE_APP_DB;
+
+CREATE OR REPLACE SCHEMA NATIVE_APP_SCHEMA;
+USE SCHEMA NATIVE_APP_SCHEMA;
+
+CREATE OR REPLACE TABLE REGIONAL_SALES (
+    PRODUCT_TYPE VARCHAR(255),
+    QUANTITY NUMBER(38,0)
+);
+
+CREATE OR REPLACE TABLE CUSTOMER_SALES (
+    PRODUCT_TYPE VARCHAR(255),
+    QUANTITY NUMBER(38,0)
+);
+
+
+-- Create a Virtual Warehouse for query processing:
+
+CREATE OR REPLACE WAREHOUSE tutorial_wh
+  WAREHOUSE_SIZE = XSMALL
+  AUTO_SUSPEND = 60
+  AUTO_RESUME = TRUE;
+
+-- Create content stage to upload project files
+
+CREATE STAGE IF NOT EXISTS content
+  ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE')
+  DIRECTORY = ( ENABLE = true );
+
+-- Create the Native App Package
+DROP APPLICATION PACKAGE native_app_package; -- This is needed only if exercise is repeated
+CREATE APPLICATION PACKAGE native_app_package;
+CREATE OR REPLACE SCHEMA NATIVE_APP_SCHEMA;
+CREATE OR REPLACE STAGE NATIVE_APP_STAGE 
+    DIRECTORY = ( ENABLE = true ) 
+    COMMENT = '';
+CREATE SCHEMA shared_content_schema;
+
+USE SCHEMA shared_content_schema;
+CREATE OR REPLACE VIEW REGIONAL_SALES AS SELECT * FROM native_app_db.native_app_schema.regional_sales;
+
+GRANT USAGE ON SCHEMA shared_content_schema TO SHARE IN APPLICATION PACKAGE native_app_package;
+GRANT REFERENCE_USAGE ON DATABASE native_app_db TO SHARE IN APPLICATION PACKAGE native_app_package;
+GRANT SELECT ON VIEW regional_sales TO SHARE IN APPLICATION PACKAGE native_app_package;
+ALTER APPLICATION PACKAGE native_app_package
+  REGISTER VERSION V1
+  USING '@native_app_package.native_app_schema.native_app_stage/src';
+USE DATABASE native_app_db;
+USE SCHEMA native_app_schema;
+COPY INTO native_app_db.native_app_schema.customer_sales
+  FROM @native_app_package.native_app_schema.native_app_stage/data/customer_sales_data.csv;
+
+COPY INTO native_app_db.native_app_schema.regional_sales
+  FROM @native_app_package.native_app_schema.native_app_stage/data/regional_sales_data.csv;
+--
+CREATE APPLICATION native_app_v1 FROM APPLICATION PACKAGE native_app_package USING VERSION V1 PATCH 0;
+SHOW APPLICATIONS;

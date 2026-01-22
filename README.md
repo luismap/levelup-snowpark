@@ -18,6 +18,8 @@
 
 ## Native app development
 
+Note: you will need to run a something like a prepare script for deploying the app.
+
 * manifest file ![alt text](images/manifest_f.png)
 * setup script ![alt text](images/setup_script.png)
 * udf.py script ![alt text](images/udfpy.png)
