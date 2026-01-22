@@ -29,7 +29,9 @@ def load_app(customer_sales):
         # Display the dataframe with the new column names
         st.dataframe(combined_df)
 
-        
+
+# check there is already a permission allowed to customer_sales ref table defined 
+# in the manifest.yml   
 customer_sales_reference_associations = permission.get_reference_associations("customer_sales")
 if len(customer_sales_reference_associations) == 0:
     permission.request_reference("customer_sales")

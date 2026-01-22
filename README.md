@@ -26,3 +26,5 @@ Note: you will need to run a something like a prepare script for deploying the a
 * core functional files for native app ![alt text](images/core_ff.png)
 * core functional components ![alt text](images/func_comp.png)
 * overview of setup script ![alt text](images/osetup.png)
+
+* snowflake native app framework [link](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
